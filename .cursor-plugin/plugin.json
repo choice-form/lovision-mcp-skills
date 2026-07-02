@@ -1,0 +1,12 @@
+{
+  "name": "lovision",
+  "displayName": "Lovision",
+  "version": "0.1.0",
+  "description": "Skill and MCP configuration for Lovision. Teaches external agents the canonical session-first Lovision MCP workflow for native design work.",
+  "author": { "name": "Lovision" },
+  "homepage": "https://lovision.ai",
+  "repository": "https://github.com/choice-form/lovision",
+  "keywords": ["lovision", "design", "mcp", "skills", "canvas", "blueprint"],
+  "skills": "./skills/",
+  "mcpServers": "./.mcp.json"
+}

@@ -1,0 +1,6 @@
+{
+  "name": "lovision",
+  "description": "Skill and MCP configuration for Lovision. Teaches external agents the canonical session-first Lovision MCP workflow for creating, editing, checking, previewing, exporting, and handing off native Lovision designs.",
+  "version": "0.1.0",
+  "author": { "name": "Lovision" }
+}

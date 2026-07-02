@@ -1,0 +1,11 @@
+{
+  "name": "lovision-skills",
+  "owner": { "name": "Lovision", "url": "https://lovision.ai" },
+  "plugins": [
+    {
+      "name": "lovision",
+      "source": "./",
+      "description": "Skill and MCP configuration for Lovision. Teaches external agents the canonical session-first Lovision MCP workflow for native design work."
+    }
+  ]
+}
