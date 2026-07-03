@@ -1,6 +1,6 @@
 ---
 name: lovision-mcp
-description: READ THIS BEFORE calling any Lovision MCP tool. Use whenever the Lovision MCP server is connected or the user mentions Lovision, lovision.ai, mcp.lovision.ai, Lovision Desktop Local MCP, a Lovision project/document/canvas, Blueprint design generation, project workspace operations, quality checks, preview/export, or asks an external agent to create, inspect, modify, or hand off native Lovision design work. Always initialize with lovision.session.init first, resolve the target before writing, read document context and capabilities before edits, prefer Blueprint for structured design work, run quality and preview after meaningful writes, and finish with lovision.session.finishWork.
+description: READ THIS BEFORE calling any Lovision MCP tool. Use whenever the Lovision MCP server is connected or the user mentions Lovision, lovision.ai, mcp.lovision.ai, Lovision Desktop Local MCP, a Lovision project/document/canvas, Blueprint design generation, project operations, quality checks, preview/export, or asks an external agent to create, inspect, modify, or hand off native Lovision design work. Always initialize with lovision.session.init first, resolve the target before writing, read document context and capabilities before edits, prefer Blueprint for structured design work, run quality and preview after meaningful writes, and finish with lovision.session.finishWork.
 ---
 
 # lovision-mcp
@@ -13,7 +13,7 @@ The remote MCP endpoint is:
 https://mcp.lovision.ai/
 ```
 
-Lovision MCP is Early Access. If OAuth does not start after connecting the server, the user may need Lovision to enable MCP for their workspace and provide the current authorization method plus `workspaceId`.
+Lovision MCP is Early Access. If OAuth does not start after connecting the server, the user may need Lovision to enable MCP for their account and provide the current authorization method.
 
 ## First Call: `lovision.session.init`
 
@@ -23,9 +23,9 @@ Pass:
 
 - `runtime`: usually `remote-web`; use `desktop-local` for Lovision Desktop Local MCP; use `internal` only for trusted internal environments.
 - `agentCredential`: when the host exposes an Agent Connection credential or bearer token.
-- `target`: any known `workspaceId`, `projectId`, `documentId`, `pageId`, or `mode`.
+- `target`: any known `projectId`, `documentId`, `pageId`, or `mode`.
 
-Do not guess targets. If the user did not provide a clear workspace/project/document/page, use workspace/project tools to resolve the target or ask a short clarification before writing.
+Do not guess targets. If the user did not provide a clear project/document/page, use project tools to resolve the target or ask a short clarification before writing.
 
 ## Canonical Workflow
 
@@ -57,7 +57,7 @@ Session and lifecycle:
 - `lovision.session.finishWork`
 - `lovision.session.abortWork`
 
-Workspace and project operations:
+Project operations:
 
 - Projects: `lovision.projects.list`, `get`, `create`, `update`, `duplicate`, `move`, `delete`, `restore`, `export`, `open`
 - Folders: `lovision.folders.list`, `create`, `update`, `delete`
@@ -112,7 +112,7 @@ Quality and delivery:
 5. **Write safely.** Include `expectedVersion` and `idempotencyKey` when a write tool accepts them.
 6. **Verify user-visible changes.** After meaningful writes, run `quality.check` and `preview.capture`; patch actionable findings when practical.
 7. **Do not roll back committed mutations because delivery failed.** Preview, export, workflow, or asset-staging failures should produce a safe stopping point and resume action.
-8. **Preserve media provenance.** Use Lovision-generated or workspace media first, licensed fallback second, explicit placeholder last. Keep unresolved media findings visible.
+8. **Preserve media provenance.** Use Lovision-generated or product media first, licensed fallback second, explicit placeholder last. Keep unresolved media findings visible.
 9. **Resolve fonts and tokens before relying on them.** Use `lovision.fonts.*` and `lovision.tokens.*`.
 10. **Do not read arbitrary local paths.** Desktop Local MCP file access must go through `lovision.localFiles.*` grants. Remote MCP cannot read local files.
 11. **Finish non-trivial sessions.** Use `lovision.session.finishWork` with changed nodes, artifacts, unresolved findings, and resume action. Use `abortWork` only for cancellation or unrecoverable setup failure.
@@ -145,8 +145,8 @@ Common structured errors:
 
 When the design needs media:
 
-1. Use Lovision generation or an existing Lovision workspace/product asset.
-2. Use a licensed external fallback only if generation/workspace asset is unavailable or unsuitable.
+1. Use Lovision generation or an existing Lovision product asset.
+2. Use a licensed external fallback only if generation/product asset is unavailable or unsuitable.
 3. Use an explicit placeholder only as a last resort, and include a quality finding or handoff note.
 
 Supported binary image MIME types currently include `image/png`, `image/jpeg`, `image/webp`, and `image/svg+xml`. `lovision.binary.create` is capped at 10 MB.
