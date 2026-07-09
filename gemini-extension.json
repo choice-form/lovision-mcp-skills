@@ -1,9 +1,9 @@
 {
   "name": "Lovision",
   "version": "0.1.0",
-  "description": "Connect Lovision to the Gemini CLI. Provides the Lovision MCP server plus skill docs for session-first native design creation, editing, quality, preview, export, and handoff workflows.",
+  "description": "Connect Lovision Remote MCP to the Gemini CLI. Provides skill docs for session-first native design creation, editing, quality, preview, export, and handoff workflows.",
   "mcpServers": {
-    "lovision": {
+    "lovision-remote": {
       "httpUrl": "https://mcp.lovision.ai/",
       "oauth": { "enabled": true }
     }

@@ -7,7 +7,7 @@ description: READ THIS BEFORE calling any Lovision MCP tool. Use whenever the Lo
 
 Lovision MCP lets external agents create, understand, edit, preview, export, and hand off real Lovision native designs. Treat it as a governed design workflow interface, not raw canvas CRUD: sessions, target resolution, permissions, capability profiles, Blueprint, quality checks, receipts, and recovery actions are all part of the contract.
 
-The remote MCP endpoint is:
+The Remote MCP server should be registered as `lovision-remote`. Its endpoint is:
 
 ```text
 https://mcp.lovision.ai/
@@ -21,8 +21,8 @@ On any new conversation or after `SESSION_NOT_FOUND`, call `lovision.session.ini
 
 Pass:
 
-- `runtime`: usually `remote-web`; use `desktop-local` for Lovision Desktop Local MCP; use `internal` only for trusted internal environments.
-- `agentCredential`: when the host exposes an Agent Connection credential or bearer token.
+- `runtime`: use `remote-web` when connected through `lovision-remote` / `https://mcp.lovision.ai`; use `desktop-local` only when connected through `lovision-desktop` / Lovision Desktop Local MCP; use `internal` only for trusted internal environments.
+- `agentCredential`: normally omit this. Remote MCP OAuth clients must rely on the MCP transport `Authorization` bearer from login/re-auth. Desktop Local MCP normally does not require Oneauth login; only pass a local dev credential when a local bridge explicitly documents one.
 - `target`: any known `projectId`, `documentId`, `pageId`, or `mode`.
 
 Do not guess targets. If the user did not provide a clear project/document/page, use project tools to resolve the target or ask a short clarification before writing.
@@ -158,7 +158,7 @@ Remote MCP config:
 ```json
 {
   "mcpServers": {
-    "lovision": {
+    "lovision-remote": {
       "type": "streamable-http",
       "url": "https://mcp.lovision.ai/"
     }
@@ -169,14 +169,43 @@ Remote MCP config:
 Claude Code manual setup:
 
 ```bash
-claude mcp add --transport http lovision https://mcp.lovision.ai/
+claude mcp add --transport http lovision-remote https://mcp.lovision.ai/
 ```
 
 Codex manual setup:
 
 ```bash
-codex mcp add lovision --url https://mcp.lovision.ai/
-codex mcp login lovision
+codex mcp add lovision-remote --url https://mcp.lovision.ai/
+codex mcp login lovision-remote
 ```
 
-Lovision Desktop Local MCP uses the loopback URL and bearer secret shown in Lovision Desktop `Settings > MCP`. Do not hand-write a Desktop config without the copied `Authorization` header.
+Desktop Local MCP should be a separate server, typically named `lovision-desktop`. It uses the loopback URL and bearer secret shown in Lovision Desktop `Settings > MCP`. Do not hand-write a Desktop config without the copied `Authorization` header.
+
+Claude / Cursor Desktop Local MCP config shape:
+
+```json
+{
+  "mcpServers": {
+    "lovision-desktop": {
+      "type": "http",
+      "url": "http://127.0.0.1:3846/mcp",
+      "headers": {
+        "Authorization": "Bearer <copied-from-lovision-desktop>"
+      }
+    }
+  }
+}
+```
+
+Codex Desktop Local MCP config shape:
+
+```toml
+[mcp_servers.lovision-desktop]
+type = "http"
+url = "http://127.0.0.1:3846/mcp"
+
+[mcp_servers.lovision-desktop.http_headers]
+Authorization = "Bearer <copied-from-lovision-desktop>"
+```
+
+Always copy the actual Desktop config because the port and secret are local to the user's machine.

@@ -5,10 +5,10 @@
 This package is shaped like an external agent skill/plugin repository. It bundles:
 
 - [`lovision-mcp`](./skills/lovision-mcp/SKILL.md): the agent skill that teaches Claude, Cursor, Codex, Gemini CLI, VS Code, and other MCP-capable agents how to use Lovision MCP safely.
-- [`.mcp.json`](./.mcp.json): the remote Lovision MCP server config.
+- [`.mcp.json`](./.mcp.json): the remote Lovision MCP server config, registered as `lovision-remote`.
 - [`.claude-plugin/`](./.claude-plugin/), [`.cursor-plugin/`](./.cursor-plugin/), and [`gemini-extension.json`](./gemini-extension.json): editor-native plugin manifests.
 
-Every install path should surface the same Markdown skill under [`skills/`](./skills/) and the same MCP endpoint:
+Every install path should surface the same Markdown skill under [`skills/`](./skills/) and the same Remote MCP endpoint:
 
 ```text
 https://mcp.lovision.ai/
@@ -25,7 +25,7 @@ claude /plugin marketplace add choice-form/lovision-mcp-skills
 claude /plugin install lovision
 ```
 
-The plugin registers the `lovision` MCP server from [`.mcp.json`](./.mcp.json) and exposes the skill docs under [`skills/`](./skills/).
+The plugin registers the `lovision-remote` MCP server from [`.mcp.json`](./.mcp.json) and exposes the skill docs under [`skills/`](./skills/).
 
 ### Claude Code skills only
 
@@ -38,10 +38,10 @@ npx skills add choice-form/lovision-mcp-skills --skill lovision-mcp -a claude-co
 Manual MCP setup:
 
 ```bash
-claude mcp add --transport http lovision https://mcp.lovision.ai/
+claude mcp add --transport http lovision-remote https://mcp.lovision.ai/
 ```
 
-Then run `/mcp` in Claude Code, select `lovision`, and complete the Lovision / OneAuth authorization flow.
+Then run `/mcp` in Claude Code, select `lovision-remote`, and complete the Lovision / OneAuth authorization flow.
 
 ### Cursor plugin
 
@@ -62,7 +62,7 @@ Manual Cursor MCP config:
 ```json
 {
   "mcpServers": {
-    "lovision": {
+    "lovision-remote": {
       "type": "streamable-http",
       "url": "https://mcp.lovision.ai/"
     }
@@ -74,7 +74,7 @@ Manual Cursor MCP config:
 
 ```bash
 gemini extensions install https://github.com/choice-form/lovision-mcp-skills
-gemini /mcp auth lovision
+gemini /mcp auth lovision-remote
 ```
 
 The extension manifest registers Lovision MCP and enables OAuth.
@@ -84,8 +84,8 @@ The extension manifest registers Lovision MCP and enables OAuth.
 Configure MCP:
 
 ```bash
-codex mcp add lovision --url https://mcp.lovision.ai/
-codex mcp login lovision
+codex mcp add lovision-remote --url https://mcp.lovision.ai/
+codex mcp login lovision-remote
 ```
 
 Then add the skill with the skills CLI if your Codex environment supports it:
@@ -102,14 +102,23 @@ For hosts that do not understand plugin manifests, either use the skills CLI for
 @include skills/lovision-mcp/SKILL.md
 ```
 
-For raw MCP clients, use [`.mcp.json`](./.mcp.json) as the server config.
+For raw MCP clients, use [`.mcp.json`](./.mcp.json) as the Remote MCP server config.
+
+## Desktop Local MCP
+
+Remote MCP and Desktop Local MCP should be configured as two different MCP servers:
+
+- `lovision-remote`: `https://mcp.lovision.ai/`, uses Lovision / OneAuth login, and should initialize sessions with runtime `remote-web`.
+- `lovision-desktop`: copied from Lovision Desktop `Settings > MCP`, uses a local bearer secret, and should initialize sessions with runtime `desktop-local`.
+
+Do not hand-write the Desktop Local MCP authorization header. Open Lovision Desktop, go to `Settings > MCP`, enable Local MCP, then copy the actual Claude/Cursor/Codex config from that screen. The default URL is usually `http://127.0.0.1:3846/mcp`, but Desktop may choose another port if `3846` is occupied.
 
 ## First Test
 
 After connecting, ask the agent:
 
 ```text
-Use the Lovision MCP server. Initialize a Lovision session with runtime "remote-web". If projectId "<projectId>" is available, open that project first; otherwise list accessible projects and ask me which one to open. Then list available capabilities and summarize the project or page context. Do not modify the design yet.
+Use the lovision-remote MCP server. Initialize a Lovision session with runtime "remote-web". If projectId "<projectId>" is available, open that project first; otherwise list accessible projects and ask me which one to open. Then list available capabilities and summarize the project or page context. Do not modify the design yet.
 ```
 
 For a write smoke test after you confirm the target:

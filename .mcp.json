@@ -1,6 +1,6 @@
 {
   "mcpServers": {
-    "lovision": {
+    "lovision-remote": {
       "type": "streamable-http",
       "url": "https://mcp.lovision.ai/"
     }
